@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from pathlib import Path
 from io import BytesIO
 from engine.validation import validate_dataframe
 from engine.analysis import run_analysis
@@ -26,8 +27,16 @@ c1, c2 = st.columns(2)
 
 with c1:
     st.subheader("1. Baixe o modelo")
-    model_path = "assets/Modelo_Analise_Parasitologica.xlsx"
-    with open(model_path, "rb") as f:
+    BASE_DIR = Path(__file__).resolve().parent
+model_path = BASE_DIR / "assets" / "Modelo_Analise_Parasitologica.xlsx"
+
+if not model_path.is_file():
+    st.error(
+        f"Arquivo do modelo não encontrado em: {model_path}"
+    )
+    st.stop()
+
+with open(model_path, "rb") as f:
         st.download_button(
             "⬇️ Baixar modelo Excel",
             data=f.read(),
